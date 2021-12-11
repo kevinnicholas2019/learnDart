@@ -2128,4 +2128,209 @@ void bab8() {
   }
   print("foreach print elements:");
   desserts.forEach(print);
+
+  /**
+   * Code as UI
+   * didart collection bisa digunakan diflutter untuk fungsi seperti
+   * spread operator (...)
+   * collection if
+   * collection for
+   * 
+   * Flutter UI menggunakan widgets seperti column, row dan stack, yang nanti
+   * akan dimasukkan ke list.
+   */
+
+  //Spread Operator
+  const pastries = ['cookies', 'croissants'];
+  const candy = ['Junior Mints', 'Twizzlers', 'M&Ms'];
+  const desserts5 = ['milk tea', ...pastries, ...candy];
+  print(desserts5);
+  //null spread operator
+  List<String>? coffees;
+  final hotDrinks = ['milk tea', ...?coffees];
+  print(hotDrinks);
+
+  //collection if
+  const peanutAllergy = true;
+  const candy2 = [
+    'Junior Mints',
+    'Twizzlers',
+    if (!peanutAllergy) 'Reeses',
+  ];
+  //keunggulannya walau konstant-compile time, tapi bisa dinamis
+  //tanpa harus modifikasi.
+  print(candy2);
+
+  //collection for
+  var bigDesserts = [
+    'ARABIAN',
+    for (var desert in desserts5) desert.toUpperCase(),
+  ]; //tidak bisa const
+
+  //mini exercises
+  List<String> months = [];
+  for (var month in [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]) {
+    months.add(month);
+  }
+
+  final List<String> months2 = [];
+  for (var month in [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]) {
+    months2.add(month);
+  }
+
+  print(months);
+  print(months2);
+
+  final monthUpperCase = [
+    for (var month in months2) month.toUpperCase(),
+  ];
+  print(monthUpperCase);
+
+  /**
+   * Sets
+   * koleksi tapi hanya unique element, tidak boleh duplicates
+   * cocok untuk dealing dengan large datasets
+   */
+  final Set<int> someSet = {}; //set int
+  final someSet2 = <int>{}; //set int
+  final anotherSet = {1, 2, 3, 1}; //inferred set int
+  print(anotherSet);
+
+  //operation/method on a set
+  print(anotherSet.contains(1)); //true
+  print(anotherSet.contains(99)); //false
+
+  //adding single elements
+  final someSet3 = <int>{};
+  someSet3.add(42);
+  someSet3.add(2112);
+  someSet3.add(42);
+  print(someSet3); // { 42, 2112 }
+  //removing elements
+  someSet3.remove(2112);
+  print(someSet3); // 42
+  //adding multiple elements
+  someSet3.addAll([1, 2, 3, 4]);
+  print(someSet3);
+  //intersection dan unions
+  //intersection
+  final setA = {8, 2, 1, 3, 1, 4};
+  final setB = {1, 6, 5, 4};
+  final intersection = setA.intersection(setB);
+  print(intersection);
+  final union = setA.union(setB);
+  print(union); //union
+  //sets intinya ga jauh beda sama list, karena sibling classnya
+
+  /**
+   * Maps
+   * key-value pairs
+   * like hashmaps dan dictionaries
+   */
+
+  //creating an empty map
+  final Map<String, int> emptyMap = {};
+  final emptyMap2 = <String, int>{};
+  final emptySomething = {};
+  //ini jadinya dictionary defaultnya <dynamic, dynamic>
+  final inventory = {
+    'cakes': 20,
+    'pies': 14,
+    'donuts': 37,
+    'cookies': 141,
+  };
+
+  final digitToWord = {
+    1: 'one',
+    2: 'two',
+    3: 'three',
+    4: 'four',
+  };
+
+  print(inventory);
+  print(digitToWord);
+
+  //Unique keys
+  final treasureMap = {
+    'garbage': 'in the dumpster',
+    'glasses': 'on your head',
+    'gold': 'in the cave',
+    // 'gold': 'under your mattress', bisa tapi jadinya nimpa, hanya yang 'under ...'
+  };
+
+  print(treasureMap);
+
+  final treasureMap2 = {
+    'garbage': ['in the dumpster'],
+    'glasses': ['on your head'],
+    'gold': ['in the cave', 'under your mattress'],
+  };
+
+  print(treasureMap2);
+
+  //Operation on a map
+  final numberOfCakes =
+      inventory['cakes']; //ada null safety, sehingga valuenya int?
+  print(numberOfCakes?.isEven);
+
+  //Adding element to a map
+  inventory['brownies'] = 3;
+  print(inventory);
+
+  //Updating an element
+  inventory['cakes'] = 1;
+  print(inventory);
+
+  //Removing elements from a map
+  inventory.remove('cookies');
+
+  //Map Properties
+  print(inventory.isEmpty); //false
+  print(inventory.isNotEmpty); //true
+  print(inventory.length); //4
+  print(inventory.keys); //only-keys
+  print(inventory.values); //only-values
+
+  //Checking for key
+  print(inventory.containsKey('pies')); //true
+  print(inventory.containsValue(42));
+
+  //Looping over element of a map
+  for (var key in inventory.keys) {
+    print(inventory[key]);
+  }
+
+  inventory.forEach((key, value) => print("$key => $value")); //foreach
+
+  for (final entry in inventory.entries) {
+    print('${entry.key} => ${entry.value}');
+  }
+
+  //mini exercises
 }
