@@ -2333,4 +2333,87 @@ void bab8() {
   }
 
   //mini exercises
+  final myInformation = {
+    "name": "Kevin Nicholas",
+    "profession": "Programmer",
+    "country": "Indonesia",
+    "city": "Jakarta"
+  };
+
+  myInformation["country"] = "Canada";
+  myInformation["city"] = "Toronto";
+  myInformation.forEach((key, value) => print("$key -> $value"));
+
+  /**
+   * Higher order methods
+   * - map
+   * - filter
+   * - reduce
+   * - fold
+   * - sort
+   */
+
+  //Mapping over a collection
+  const numbers = [1, 2, 3, 4];
+  final squares = numbers.map((number) => number * number); //Iterable<int>
+  print(squares);
+  squares.toList(); //kelist
+
+  //Filtering a collection
+  final evens = squares.where((square) => square.isEven);
+
+  //mengubah koleksi menjadi kesatuan values (consolidating a collection)
+  //using reduce
+  const amounts = [199, 299, 299, 199, 499];
+  final total = amounts.reduce((sum, element) => sum + element);
+  //jika amount kosong, fungsi reduce error karena element tidak ada
+  print(total);
+
+  //using fold
+  const amounts2 = <int>[];
+  final total2 =
+      amounts2.fold(0, (int sum, element) => sum + element); //no error
+  print(total2);
+
+  //sorting list
+  final desserts10 = ['cookies', 'pie', 'donuts', 'brownies'];
+  desserts10.sort();
+
+  //reversing list
+  var dessertsReversed = desserts10.reversed; //tidak mengubah koleksi
+  desserts10.sort((a, b) => a.compareTo(b)); //asc (default)
+  desserts10.sort((b, a) => a.compareTo(b)); //desc
+
+  //mini-exercisese
+  final scores = [89, 77, 46, 93, 82, 67, 32, 88];
+  scores.sort();
+  print(scores.first); //lowest
+  print(scores.last); //highest
+  print(
+      scores.where((element) => element >= 80 && element <= 90)); //all grade b
+
+  //list buat ordering, searching jelek
+  //sets buat penataan koleksi
+  //maps buat searching
+
+  //Challenges
+  const paragraphOfText = 'Once upon a time there was a Dart programmer who '
+      'had a challenging challenge to solve. Though the challenge was great, '
+      'a solution did come. The end.';
+
+  void challenge1() {
+    /// Challenge 1: A unique request
+    ///
+    /// Write a function that takes a paragraph of text and returns a
+    /// collection of unique String characters that the text contains.
+    Set<String> uniqueCodePoints(String text) {
+      return text.runes
+          .map((codePoint) => String.fromCharCode(codePoint))
+          .toSet();
+    }
+
+    print(uniqueCodePoints(paragraphOfText));
+  }
+
+  challenge1();
 }
