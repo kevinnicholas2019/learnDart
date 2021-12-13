@@ -1,10 +1,11 @@
 import 'dart:math';
 import 'package:characters/characters.dart';
 
+import 'bab10.dart';
 import 'bab9.dart';
 
 void main() {
-  bab9();
+  bab10();
 }
 
 void bab2() {
@@ -435,8 +436,7 @@ void bab3() {
   /**
    * Multi-line Strings
    */
-  const bigString =
-      '''Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+  const bigString = '''Lorem ipsum dolor sit amet consectetur adipisicing elit. 
 Repellendus at qui quae a ipsam quam cumque pariatur quo expedita! Facilis, 
 illo? Dicta eaque optio eligendi explicabo omnis, nihil molestiae iure.''';
   print(bigString);

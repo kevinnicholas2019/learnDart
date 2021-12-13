@@ -352,6 +352,118 @@ class Platypus3 extends Animal with EggLayer {
 
 class Robin2 extends Bird with Flyer, EggLayer {}
 
+/**
+ * Mini Exercises
+ */
+class Calculator with Adder {}
+
+mixin Adder {
+  num sum(num a, num b) => a + b;
+}
+
+// ignore: slash_for_doc_comments
+/**
+ * Extension Methods
+ * dart kasih fitur extension, yang berguna untuk menambahkan fungsi existing classes.
+ */
+
+// extension on SomeClass {
+//   //your custom code
+// }
+
+// extension YourExtensionName on ClassName {
+
+// }
+
+//String extension example
+extension on String {
+  String get encoded {
+    return _code(1);
+  }
+
+  String get decoded {
+    return _code(-1);
+  }
+
+  String _code(int step) {
+    final output = StringBuffer();
+    for (final codePoint in runes) {
+      output.writeCharCode(codePoint + step);
+    }
+    return output.toString();
+  }
+}
+
+String encode(String input) {
+  final output = StringBuffer();
+  for (final codePoint in input.runes) {
+    output.writeCharCode(codePoint + 1);
+  }
+  return output.toString();
+}
+
+extension on int {
+  int get cubed {
+    return this * this * this;
+  }
+}
+
+enum ProgrammingLanguage {
+  dart,
+  swift,
+  javaScript,
+}
+
+//agar enum bisa method (dart >= 2.6)
+extension on ProgrammingLanguage {
+  bool get isStronglyTyped {
+    switch (this) {
+      case ProgrammingLanguage.dart:
+      case ProgrammingLanguage.swift:
+        return true;
+      case ProgrammingLanguage.javaScript:
+        return false;
+      default:
+        throw Exception('Unknown Programming Language $this');
+    }
+  }
+}
+
+//jangan terlalu banyak menggunakan extension, jika memang tidak diperlukan
+
+// ignore: slash_for_doc_comments
+/**
+ * Challenges
+ */
+
+class Platypus4 extends Animal with EggLayer implements Comparable<Platypus4> {
+  Platypus4(this.weight);
+
+  final num weight;
+
+  @override
+  void eat() {
+    print('Munch munch');
+  }
+
+  @override
+  void move() {
+    print('Glide glide');
+  }
+
+  @override
+  int compareTo(Platypus4 other) {
+    return weight.compareTo(other.weight);
+  }
+
+  @override
+  String toString() => "Platypus weight : $weight";
+}
+
+extension on int {
+  Duration get minutes => Duration(minutes: this);
+}
+
 void bab9() {
   usingTheClasses();
   siblingClasses();
@@ -388,4 +500,37 @@ void bab9() {
   //- dependency injection
   final bottle = Bottle();
   bottle.open();
+  final original = 'abc';
+  final secret = encode(original);
+  print(secret);
+  print('abc'.encoded.decoded);
+  final original2 = 'I like extensions!';
+  final secret2 = original2.encoded;
+  final revealed = secret2.decoded;
+  print(secret);
+  print(revealed);
+  print(100.cubed);
+  final language = ProgrammingLanguage.dart;
+  print(language.isStronglyTyped);
+  final platypuses = <Platypus4>[
+    Platypus4(90),
+    Platypus4(50),
+    Platypus4(20),
+    Platypus4(100),
+  ];
+  platypuses.sort();
+  print(platypuses);
+  final timeRemaining = 3.minutes;
+  print(timeRemaining);
+  print(
+      'Uif!tfdsfu!up!mfbsojoh!Ebsu!xfmm!jt!up!dg"ewtkqwu"cpf"lwuv"vt{"vjkpiu0"Vlqfh#|rx*uh#uhdglqj#wklv/#wkdw#reylrxvo|#ghvfulehv#|rx1#Kssh\$nsf%'
+          .decoded);
+  print(
+      'cf!dvsjpvt!boe!kvtu!usz!uijoht/!Ukpeg"{qw)tg"tgcfkpi"vjku."vjcv"qdxkqwun{"fguetkdgu"{qw0"Jrrg#mre\$'
+          .decoded);
+  print('Tjodf!zpv(sf!sfbejoh!uijt-!uibu!pcwjpvtmz!eftdsjcft!zpv/!Iqqf"lqd#'
+      .decoded);
+  print('Hppe!kpc"'.decoded);
+  print(
+      "The secret to learning Dart well is to be curious and just try things. Since you're reading this, that obviously describes you. Good job");
 }
