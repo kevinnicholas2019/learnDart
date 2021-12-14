@@ -29,6 +29,17 @@ void bab10() {
    * - microtask queue (lebih banyak digunakan)
    * - event queue (digunakan ketika ada events, seperti user touching the screen)
    * 
+   * cara kerja the event loop :
+   * - sync task di main isolate thread selalu berjalan, tidak diinterupsi.
+   * - jika dart mencari long-running task yang sudah diizinkan dipostponed, dart memasukkannya ke event queue
+   * - ketika dart selesai menjalankan sync task, event loop akan mengerjakan microtask queue,
+   *   jika microtask queueu masih memiliki task, the event loop meletakkan nya ke main thread dahulu untuk dieksekusi selanjutnya.
+   *   the event loop akan cek microtask queue sampai abis.
+   * - jika sync-task dan microtask-queue kosong, maka event loop mengirim task selanjutnya di event queue untuk di run di main thread.
+   *   setelah sudah sampai main, bakaln diexecuted secara synchronously.
+   * - jika ada microtask baru, event loop bakal handle sebelum next event queue.
+   * - process ini akan berulang sampai queue habis.
+   * 
    * Running code parallel
    * menggunakan dart isolate.spawn
    * 
