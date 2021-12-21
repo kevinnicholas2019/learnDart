@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'package:http/http.dart' as http;
 
 void bab10() {
@@ -152,12 +154,207 @@ void bab10() {
    * multiple values of future
    * 
    * Subscribing to a stream
-   * contoh read file
+   * adding an assets file
    */
 
   Future<void> readingFileAsString() async {
-    final file = File('assets/text.txt');
+    final file = File('bin/text.txt');
+    final contents = await file.readAsString();
+    print(contents);
   }
+
+  readingFileAsString();
+
+  /**
+   * Streams
+   * Increasing the file size
+   * jika file nya besar, dapat menggunakan stream. contoh
+   */
+  Future.delayed(Duration(seconds: 3), () {
+    var index = 0;
+    final file = File('bin/text_long.txt');
+    final stream = file.openRead();
+    // final broadcastStream = stream.asBroadcastStream(); //jika ingin lebih dari 1 objek, harus menggunakan stream asBroadcastStream
+    stream.listen((data) =>
+        print("${++index}: ${data.length}")); //ini single subscription stream
+    // broadcastStream.listen(print);
+    // stream.listen(print);
+  });
+
+  // ignore: slash_for_doc_comments
+  /**
+   * Streams
+   * Using asynchronous for loop
+   * async-await
+   */
+
+  Future<void> usingAsyncForLoop() async {
+    print("Using async for loop:");
+    final file = File('bin/text_long.txt');
+    final stream = file.openRead();
+    await for (var data in stream) {
+      print(data.length);
+    }
+    print("Using async for loop END");
+  }
+
+  Future.delayed(Duration(seconds: 4), usingAsyncForLoop);
+
+  /**
+   * Error Handling Streams
+   */
+
+  Future.delayed(Duration(seconds: 5), () {
+    final file = File('bin/text_long_asd.txt');
+    final stream = file.openRead();
+    stream.listen(
+      (data) {
+        print(data.length);
+      },
+      onError: (error) {
+        print(error);
+      },
+      onDone: () {
+        print('All finished');
+      },
+      cancelOnError: false, //kalau true, otomatis ke cancel kalo terjadi error
+    );
+  });
+
+  //note, ketika error, tidak terjadi cancel stream dan masih melanjutkan streams untuk receive data,
+  //jika ingin cancel the stream setelah itu baru ke error, harus check cancelOnError = true
+  //ketika stream berhasil mengirim semua data, maka bisa callback di onDone
+
+  /**
+   * Error Handling Streams
+   * using try-catch
+   */
+  Future.delayed(Duration(seconds: 6), () async {
+    try {
+      final file = File('bin/pink_elephants.txt');
+      final stream = file.openRead();
+      await for (var data in stream) {
+        print(data.length);
+      }
+    } on Exception catch (error) {
+      print(error);
+    } finally {
+      print("All finished");
+    }
+  });
+
+  /**
+   * Cancelling a stream
+   * cancelOnError dibikin true
+   */
+
+  Future.delayed(Duration(seconds: 7), () {
+    final file = File('bin/text_long.txt');
+    final stream = file.openRead();
+    StreamSubscription<List<int>>? subscription;
+    subscription = stream.listen(
+      (data) {
+        print("Stream Cancelled!");
+        print(data.length);
+        subscription?.cancel();
+        print("Stream Cancelled Status: Ended!");
+      },
+      cancelOnError: true,
+      onDone: () {
+        print(
+            'Stream Cancelled Status: All finished'); //ini tidak muncul, karena dicancel
+      },
+    );
+  });
+
+  /**
+   * Transforming a stream
+   * jadi hasil data stream file berbentuk UTF-8 (karena int 1 byte),
+   * sehingga perlu convert (decoding) dari UTF-8 ke string,
+   * ini agar ngirim data secara network lebih ringan menggunakan UTF-8
+   */
+
+  /**
+   * Transforming a stream : viewing the bytes
+   */
+  // Future.delayed(Duration(seconds: 8), () {
+  //   final file = File('bin/text_long.txt');
+  //   final stream = file.openRead();
+  //   print("viewing the bytes");
+  //   stream.listen((data) => print(data)); // [76, 111, 114, 101, ... ] hanya 1 bytes (karena int jadinya UTF-8)
+  // });
+
+  /**
+   * Transforming a stream : decoding the bytes
+   */
+  // Future.delayed(Duration(seconds: 8), () async {
+  //   final file = File('bin/text_long.txt');
+  //   final stream = file.openRead();
+  //   print("viewing the bytes");
+  //   await for (var data in stream.transform(utf8.decoder)) {
+  //     print(data); //jadi string, karena didecode
+  //   }
+  // });
+
+  /**
+   * Mini-Exercises
+   */
+  Future.delayed(Duration(seconds: 8), () async {
+    final myStream = Stream<int>.periodic(
+      Duration(seconds: 1),
+      (value) => value,
+    ).take(10);
+    await for (var data in myStream) {
+      print(data);
+    }
+  });
+
+  Future<String> playHideAndSeekTheLongVersion() async {
+    var counting = 0;
+    await Future(() {
+      for (var i = 1; i <= 10000000000; i++) {
+        //stuck di sync dan async
+        counting = i;
+      }
+    });
+    return '$counting! Ready or not, here I come!';
+  }
+
+  Future<void> appStopingOnAsyncCode() async {
+    print("Ok, I'm counting...");
+    print(await playHideAndSeekTheLongVersion());
+  }
+
+  //appStopingOnAsyncCode();
+
+  // ignore: slash_for_doc_comments
+  /**
+   * Pakai Isolates Spawn
+   */
+  void playHideAndSeekTheLongVersionForIsolate(SendPort sendPort) {
+    var counting = 0;
+    for (var i = 1; i <= 1000000000; i++) {
+      counting = i;
+    }
+    sendPort.send('$counting! Ready or not, here I come!');
+  }
+
+  void usingIsolateSpawn() async {
+    final receivePort = ReceivePort();
+    final isolate = await Isolate.spawn(
+      playHideAndSeekTheLongVersionForIsolate,
+      receivePort.sendPort,
+    );
+    receivePort.listen((message) {
+      print(message);
+      receivePort.close();
+      isolate.kill();
+    });
+  }
+
+  Future.delayed(Duration(seconds: 9), usingIsolateSpawn);
+
+  //kalo pake flutter, gunakan compute(fungsi, pass_value)
 }
 
 class Todo {
